@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 // Custom components for MDX
 import React from 'react';
 
-export function useMDXComponents(components: MDXComponents): MDXComponents {
+export function getMDXComponents(components: MDXComponents = {}): MDXComponents {
   return {
     h1: ({ children }) => {
       const h1Props = components?.h1 as React.ComponentProps<'h1'>;
@@ -29,6 +29,11 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     code: ({ children }) => (
       <code className="bg-muted p-1 rounded-md">{children}</code>
     ),
-     ...components,
+    ...components,
   }
+}
+
+/** Required by @next/mdx file convention; prefer getMDXComponents in Server Components. */
+export function useMDXComponents(components: MDXComponents): MDXComponents {
+  return getMDXComponents(components)
 }
