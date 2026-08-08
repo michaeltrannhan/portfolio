@@ -1,8 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { notFound } from "next/navigation";
-import { MDXRemote } from "next-mdx-remote/rsc";
-import matter from "gray-matter";
+import { compileMDX } from "next-mdx-remote/rsc";
 import { getMDXComponents } from "@/app/mdx-components";
 
 interface Props {
@@ -45,17 +44,17 @@ async function getPost(slug: string): Promise<string | null> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params;
-  const postContent = await getPost(slug);
+  const source = await getPost(slug);
 
-  if (!postContent) {
+  if (!source) {
     notFound();
   }
 
-  const { content } = matter(postContent);
+  const { content } = await compileMDX({
+    source,
+    components: getMDXComponents(),
+    options: { parseFrontmatter: true },
+  });
 
-  return (
-    <div className="prose mx-auto py-8">
-      <MDXRemote source={content} components={getMDXComponents()} />
-    </div>
-  );
+  return <div className="prose mx-auto py-8">{content}</div>;
 }
