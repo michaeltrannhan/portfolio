@@ -3,8 +3,7 @@
 import { useLayoutEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { easeOut } from "@/components/motion";
-
-const INTRO_KEY = "mt-intro-seen";
+import { INTRO_SEEN_KEY } from "@/lib/site";
 
 type CurtainState = "idle" | "show" | "gone";
 
@@ -24,7 +23,7 @@ export function PageCurtain() {
 
     let introPending = false;
     try {
-      introPending = !sessionStorage.getItem(INTRO_KEY);
+      introPending = !sessionStorage.getItem(INTRO_SEEN_KEY);
     } catch {
       introPending = true;
     }

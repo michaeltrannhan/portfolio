@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { easeOut } from "@/components/motion";
+import { useScrollLock } from "@/lib/use-scroll-lock";
 
 export type CaseStudy = {
   id: string;
@@ -32,13 +33,11 @@ export function ProjectModal({ studies, className }: ProjectModalProps) {
       if (e.key === "Escape") setActive(null);
     };
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [active]);
+
+  // Lock background scroll (with scrollbar compensation) while a study is open.
+  useScrollLock(active !== null);
 
   return (
     <div className={cn("grid gap-3 sm:grid-cols-2", className)}>

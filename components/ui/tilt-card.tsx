@@ -1,14 +1,9 @@
 "use client";
 
-import {
-  useCallback,
-  useRef,
-  useState,
-  type MouseEvent,
-  type ReactNode,
-} from "react";
+import { type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { usePointerNormalized } from "@/lib/use-pointer-track";
 
 type TiltCardProps = {
   children: ReactNode;
@@ -22,45 +17,22 @@ export function TiltCard({
   className,
   maxTilt = 6,
 }: TiltCardProps) {
-  const ref = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-  const [transform, setTransform] = useState({
-    rotateX: 0,
-    rotateY: 0,
+  const { ref, pos, bind } = usePointerNormalized({
+    enabled: !reduceMotion,
   });
-
-  const onMove = useCallback(
-    (event: MouseEvent<HTMLDivElement>) => {
-      if (reduceMotion) return;
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const px = (event.clientX - rect.left) / rect.width;
-      const py = (event.clientY - rect.top) / rect.height;
-      setTransform({
-        rotateX: (0.5 - py) * maxTilt,
-        rotateY: (px - 0.5) * maxTilt,
-      });
-    },
-    [maxTilt, reduceMotion]
-  );
-
-  const onLeave = useCallback(() => {
-    setTransform({ rotateX: 0, rotateY: 0 });
-  }, []);
 
   return (
     <motion.div
       ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
+      {...bind}
       style={{ perspective: 900 }}
       className={cn("max-md:[transform:none!important]", className)}
     >
       <motion.div
         animate={{
-          rotateX: transform.rotateX,
-          rotateY: transform.rotateY,
+          rotateX: (0.5 - pos.y) * maxTilt,
+          rotateY: (pos.x - 0.5) * maxTilt,
         }}
         transition={{ type: "spring", stiffness: 280, damping: 22 }}
         style={{ transformStyle: "preserve-3d" }}

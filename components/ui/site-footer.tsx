@@ -1,29 +1,12 @@
 "use client";
 
-import { Github, Linkedin, Mail } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { SOCIALS } from "@/lib/site";
 import { AnimatedLink } from "@/components/ui/animated-link";
 import { FooterWave } from "@/components/effects/footer-wave";
 import { MagneticTrail } from "@/components/effects/magnetic-trail";
-
-const socials = [
-  {
-    name: "GitHub",
-    href: "https://github.com/",
-    icon: Github,
-  },
-  {
-    name: "LinkedIn",
-    href: "https://linkedin.com/",
-    icon: Linkedin,
-  },
-  {
-    name: "Email",
-    href: "mailto:hello@michaeltrannhan.dev",
-    icon: Mail,
-  },
-];
+import { SocialLink } from "@/components/ui/social-link";
 
 type SiteFooterProps = {
   className?: string;
@@ -54,33 +37,20 @@ export function SiteFooter({ className }: SiteFooterProps) {
           </div>
 
           <ul className="flex items-center gap-2">
-            {socials.map((social) => {
-              const Icon = social.icon;
-              return (
-                <li key={social.name}>
-                  <MagneticTrail>
-                    <a
-                      href={social.href}
-                      target={
-                        social.href.startsWith("http") ? "_blank" : undefined
-                      }
-                      rel={
-                        social.href.startsWith("http")
-                          ? "noopener noreferrer"
-                          : undefined
-                      }
-                      aria-label={social.name}
-                      className={cn(
-                        "glass-pill inline-flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-[var(--glass-bg-tint)]",
-                        reduceMotion && "transition-none"
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
-                    </a>
-                  </MagneticTrail>
-                </li>
-              );
-            })}
+            {SOCIALS.map((social) => (
+              <li key={social.name}>
+                <MagneticTrail>
+                  <SocialLink
+                    social={social}
+                    className={cn(
+                      "glass-pill inline-flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-[var(--glass-bg-tint)]",
+                      reduceMotion && "transition-none"
+                    )}
+                    iconClassName="h-4 w-4"
+                  />
+                </MagneticTrail>
+              </li>
+            ))}
           </ul>
         </div>
       </footer>

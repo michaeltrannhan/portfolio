@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useRef, type MouseEvent } from "react";
 import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useDesktopPointer } from "@/lib/use-media";
+import { usePointerGeometry } from "@/lib/use-pointer-track";
 
 type WarpingGridProps = {
   className?: string;
@@ -13,25 +13,19 @@ type WarpingGridProps = {
 export function WarpingGrid({ className }: WarpingGridProps) {
   const reduceMotion = useReducedMotion();
   const desktop = useDesktopPointer();
-  const ref = useRef<HTMLDivElement>(null);
-
-  const onMove = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
-      if (!desktop || reduceMotion) return;
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      el.style.setProperty("--gx", `${e.clientX - rect.left}px`);
-      el.style.setProperty("--gy", `${e.clientY - rect.top}px`);
+  const { ref, onMouseMove } = usePointerGeometry(
+    (g, el) => {
+      el.style.setProperty("--gx", `${g.px}px`);
+      el.style.setProperty("--gy", `${g.py}px`);
     },
-    [desktop, reduceMotion]
+    { enabled: desktop && !reduceMotion }
   );
 
   return (
     <div
       ref={ref}
       aria-hidden
-      onMouseMove={onMove}
+      onMouseMove={onMouseMove}
       className={cn(
         "pointer-events-none absolute inset-0 max-md:hidden",
         className

@@ -12,9 +12,10 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { useReducedMotion } from "framer-motion";
-import { Github, Linkedin, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SOCIALS } from "@/lib/site";
 import { GlassPanel } from "@/components/ui/glass-panel";
+import { SocialLink } from "@/components/ui/social-link";
 
 type NameIntroCardProps = {
   text?: string;
@@ -26,24 +27,6 @@ const navLinks = [
   { label: "Projects", href: "#projects" },
   { label: "Blog", href: "#blog" },
   { label: "Contact", href: "#contact" },
-];
-
-const socials = [
-  {
-    name: "GitHub",
-    href: "https://github.com/",
-    icon: Github,
-  },
-  {
-    name: "LinkedIn",
-    href: "https://linkedin.com/",
-    icon: Linkedin,
-  },
-  {
-    name: "Email",
-    href: "mailto:hello@michaeltrannhan.dev",
-    icon: Mail,
-  },
 ];
 
 const PANEL_WIDTH_REM = 17.5; // ~280px — tooltip / link-preview scale
@@ -272,28 +255,16 @@ export function NameIntroCard({
             </nav>
 
             <ul className="flex shrink-0 items-center gap-0.5">
-              {socials.map((social) => {
-                const Icon = social.icon;
-                return (
-                  <li key={social.name}>
-                    <a
-                      href={social.href}
-                      target={
-                        social.href.startsWith("http") ? "_blank" : undefined
-                      }
-                      rel={
-                        social.href.startsWith("http")
-                          ? "noopener noreferrer"
-                          : undefined
-                      }
-                      aria-label={social.name}
-                      className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      <Icon className="h-3 w-3" strokeWidth={1.75} />
-                    </a>
-                  </li>
-                );
-              })}
+              {SOCIALS.map((social) => (
+                <li key={social.name}>
+                  <SocialLink
+                    social={social}
+                    className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
+                    iconClassName="h-3 w-3"
+                    iconStrokeWidth={1.75}
+                  />
+                </li>
+              ))}
             </ul>
           </div>
         </GlassPanel>

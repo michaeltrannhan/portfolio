@@ -10,21 +10,17 @@ import {
 } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Search } from "lucide-react";
+import { SECTIONS } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import { useScrollLock } from "@/lib/use-scroll-lock";
 import { easeOut } from "@/components/motion";
 
-const DESTINATIONS = [
-  { id: "about", label: "About", hint: "Intro & story", href: "#about" },
-  { id: "tech", label: "Tech", hint: "Stack & tools", href: "#tech" },
-  {
-    id: "projects",
-    label: "Projects",
-    hint: "Selected work",
-    href: "#projects",
-  },
-  { id: "blog", label: "Blog", hint: "Writing", href: "#blog" },
-  { id: "contact", label: "Contact", hint: "Footer / socials", href: "#contact" },
-];
+const DESTINATIONS = SECTIONS.map((section) => ({
+  id: section.id,
+  label: section.label,
+  hint: section.hint,
+  href: `#${section.id}`,
+}));
 
 /** Dispatched by Navbar (and anything else) to open the palette. */
 export const OPEN_COMMAND_PALETTE_EVENT = "mt:open-command-palette";
@@ -40,8 +36,16 @@ export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
+  const [lastQuery, setLastQuery] = useState(query);
   const panelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Reset the highlighted row when the query changes (render-time adjust,
+  // per https://react.dev/learn/you-might-not-need-an-effect).
+  if (query !== lastQuery) {
+    setLastQuery(query);
+    setActive(0);
+  }
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -50,10 +54,6 @@ export function CommandPalette() {
       (d) =>
         d.label.toLowerCase().includes(q) || d.hint.toLowerCase().includes(q)
     );
-  }, [query]);
-
-  useEffect(() => {
-    setActive(0);
   }, [query]);
 
   useEffect(() => {
@@ -74,14 +74,10 @@ export function CommandPalette() {
     };
   }, []);
 
+  useScrollLock(open);
+
   useEffect(() => {
     if (!open) return;
-    const sbw = window.innerWidth - document.documentElement.clientWidth;
-    const prevOverflow = document.body.style.overflow;
-    const prevPadding = document.body.style.paddingRight;
-    document.body.style.overflow = "hidden";
-    if (sbw > 0) document.body.style.paddingRight = `${sbw}px`;
-
     const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 0);
 
     const onFocusTrap = (e: KeyboardEvent) => {
@@ -105,8 +101,6 @@ export function CommandPalette() {
     return () => {
       window.clearTimeout(focusTimer);
       window.removeEventListener("keydown", onFocusTrap);
-      document.body.style.overflow = prevOverflow;
-      document.body.style.paddingRight = prevPadding;
     };
   }, [open]);
 

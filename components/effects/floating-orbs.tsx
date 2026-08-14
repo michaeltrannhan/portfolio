@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useRef, useState, type MouseEvent } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useDesktopPointer } from "@/lib/use-media";
+import { usePointerNormalized } from "@/lib/use-pointer-track";
 
 type FloatingOrbsProps = {
   className?: string;
@@ -19,28 +19,17 @@ const ORBS = [
 export function FloatingOrbs({ className }: FloatingOrbsProps) {
   const reduceMotion = useReducedMotion();
   const desktop = useDesktopPointer();
-  const ref = useRef<HTMLDivElement>(null);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const { ref, pos, bind } = usePointerNormalized({
+    enabled: desktop && !reduceMotion,
+  });
 
-  const onMove = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
-      if (!desktop || reduceMotion) return;
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const nx = (e.clientX - rect.left) / rect.width - 0.5;
-      const ny = (e.clientY - rect.top) / rect.height - 0.5;
-      setOffset({ x: nx * 40, y: ny * 28 });
-    },
-    [desktop, reduceMotion]
-  );
+  const offset = { x: (pos.x - 0.5) * 40, y: (pos.y - 0.5) * 28 };
 
   return (
     <div
       ref={ref}
       aria-hidden
-      onMouseMove={onMove}
-      onMouseLeave={() => setOffset({ x: 0, y: 0 })}
+      {...bind}
       className={cn(
         "pointer-events-none absolute inset-0 overflow-hidden max-md:pointer-events-none",
         className

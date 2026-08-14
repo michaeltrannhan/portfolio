@@ -1,14 +1,10 @@
 "use client";
 
-import {
-  useCallback,
-  useRef,
-  useState,
-  type MouseEvent,
-  type ReactNode,
-} from "react";
+import { type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { magneticSpring } from "@/components/motion";
 import { cn } from "@/lib/utils";
+import { useMagneticOffset } from "@/lib/use-pointer-track";
 
 type MagneticProps = {
   children: ReactNode;
@@ -22,32 +18,18 @@ export function Magnetic({
   className,
   strength = 0.28,
 }: MagneticProps) {
-  const ref = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-  const [{ x, y }, set] = useState({ x: 0, y: 0 });
-
-  const onMove = useCallback(
-    (event: MouseEvent<HTMLDivElement>) => {
-      if (reduceMotion) return;
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const dx = event.clientX - (rect.left + rect.width / 2);
-      const dy = event.clientY - (rect.top + rect.height / 2);
-      set({ x: dx * strength, y: dy * strength });
-    },
-    [reduceMotion, strength]
-  );
-
-  const onLeave = useCallback(() => set({ x: 0, y: 0 }), []);
+  const { ref, offset, bind } = useMagneticOffset({
+    strength,
+    enabled: !reduceMotion,
+  });
 
   return (
     <motion.div
       ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      animate={{ x, y }}
-      transition={{ type: "spring", stiffness: 260, damping: 18, mass: 0.4 }}
+      {...bind}
+      animate={{ x: offset.x, y: offset.y }}
+      transition={magneticSpring}
       className={cn("inline-flex max-md:!transform-none", className)}
     >
       {children}

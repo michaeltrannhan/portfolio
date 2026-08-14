@@ -3,22 +3,10 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { easeOut } from "@/components/motion";
-
-const STORAGE_KEY = "mt-intro-seen";
+import { INTRO_SEEN_KEY } from "@/lib/site";
+import { useScrollLock } from "@/lib/use-scroll-lock";
 
 type Phase = "boot" | "intro" | "done";
-
-function lockScroll() {
-  const sbw = window.innerWidth - document.documentElement.clientWidth;
-  const prevOverflow = document.body.style.overflow;
-  const prevPadding = document.body.style.paddingRight;
-  document.body.style.overflow = "hidden";
-  if (sbw > 0) document.body.style.paddingRight = `${sbw}px`;
-  return () => {
-    document.body.style.overflow = prevOverflow;
-    document.body.style.paddingRight = prevPadding;
-  };
-}
 
 const COVER =
   "fixed inset-0 z-[100] flex items-center justify-center bg-[oklch(0.18_0.025_240)] text-[oklch(0.96_0.01_220)]";
@@ -39,7 +27,7 @@ export function IntroOverlay() {
     }
 
     try {
-      if (sessionStorage.getItem(STORAGE_KEY)) {
+      if (sessionStorage.getItem(INTRO_SEEN_KEY)) {
         setPhase("done");
         return;
       }
@@ -51,7 +39,7 @@ export function IntroOverlay() {
 
   const dismiss = () => {
     try {
-      sessionStorage.setItem(STORAGE_KEY, "1");
+      sessionStorage.setItem(INTRO_SEEN_KEY, "1");
     } catch {
       /* ignore */
     }
@@ -70,10 +58,8 @@ export function IntroOverlay() {
     return () => window.removeEventListener("keydown", onKey);
   }, [phase]);
 
-  useEffect(() => {
-    if (phase === "done") return;
-    return lockScroll();
-  }, [phase]);
+  // Cover the page (with scrollbar compensation) until the intro finishes.
+  useScrollLock(phase !== "done");
 
   // Returning visit: drop cover in the same layout pass — no exit wipe.
   if (phase === "boot") {

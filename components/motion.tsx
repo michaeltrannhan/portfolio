@@ -1,34 +1,27 @@
 "use client";
 
 import { type ReactNode } from "react";
-import {
-  motion,
-  type HTMLMotionProps,
-  useReducedMotion,
-  type Variants,
-} from "framer-motion";
-import { cn } from "@/lib/utils";
+import { motion, type HTMLMotionProps, useReducedMotion } from "framer-motion";
 
 export const easeOut = [0.22, 1, 0.36, 1] as const;
 
-export const fadeUp: Variants = {
+/** Canonical spring for magnetic hover offsets (Magnetic, MagneticTrail, …). */
+export const magneticSpring = {
+  type: "spring",
+  stiffness: 260,
+  damping: 18,
+  mass: 0.4,
+} as const;
+
+/** Shared fade-up variants (Reveal). */
+const fadeUp = {
   hidden: { opacity: 0, y: 16 },
   visible: {
     opacity: 1,
     y: 0,
     transition: { duration: 0.5, ease: easeOut },
   },
-};
-
-export const staggerContainer: Variants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.04,
-    },
-  },
-};
+} as const;
 
 type RevealProps = HTMLMotionProps<"div"> & {
   children: ReactNode;
@@ -95,50 +88,3 @@ export function FadeIn({
   );
 }
 
-type StaggerProps = {
-  children: ReactNode;
-  className?: string;
-};
-
-export function Stagger({ children, className }: StaggerProps) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    return <div className={className}>{children}</div>;
-  }
-
-  return (
-    <motion.div
-      className={className}
-      variants={staggerContainer}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-8% 0px" }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-type StaggerItemProps = HTMLMotionProps<"div"> & {
-  children: ReactNode;
-  className?: string;
-};
-
-export function StaggerItem({
-  children,
-  className,
-  ...props
-}: StaggerItemProps) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    return <div className={className}>{children}</div>;
-  }
-
-  return (
-    <motion.div className={cn(className)} variants={fadeUp} {...props}>
-      {children}
-    </motion.div>
-  );
-}

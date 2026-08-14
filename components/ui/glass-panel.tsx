@@ -30,8 +30,3 @@ export function GlassPanel({
     </Tag>
   );
 }
-
-/** Class helper for composing glass onto existing elements (buttons, anchors). */
-export function glassClass(variant: GlassVariant = "default") {
-  return variantClass[variant];
-}

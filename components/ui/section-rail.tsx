@@ -1,16 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { SECTIONS, SECTION_IDS } from "@/lib/site";
 import { cn } from "@/lib/utils";
-
-const SECTIONS = [
-  { id: "about", label: "About" },
-  { id: "tech", label: "Tech" },
-  { id: "projects", label: "Projects" },
-  { id: "blog", label: "Blog" },
-  { id: "contact", label: "Contact" },
-];
+import { useActiveSection } from "@/lib/use-active-section";
 
 type SectionRailProps = {
   className?: string;
@@ -19,26 +12,7 @@ type SectionRailProps = {
 /** Side rail dots with active pulse as sections enter view. */
 export function SectionRail({ className }: SectionRailProps) {
   const reduceMotion = useReducedMotion();
-  const [active, setActive] = useState("about");
-
-  useEffect(() => {
-    const elements = SECTIONS.map((s) => document.getElementById(s.id)).filter(
-      Boolean
-    ) as HTMLElement[];
-    if (!elements.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0));
-        if (visible[0]?.target?.id) setActive(visible[0].target.id);
-      },
-      { rootMargin: "-40% 0px -45% 0px", threshold: [0, 0.25, 0.5] }
-    );
-    elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
+  const active = useActiveSection(SECTION_IDS);
 
   return (
     <nav

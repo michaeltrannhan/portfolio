@@ -1,15 +1,11 @@
 "use client";
 
-import {
-  useCallback,
-  useRef,
-  useState,
-  type MouseEvent,
-  type ReactNode,
-} from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { magneticSpring } from "@/components/motion";
 import { cn } from "@/lib/utils";
 import { useDesktopPointer } from "@/lib/use-media";
+import { usePointerGeometry } from "@/lib/use-pointer-track";
 
 type MagneticTrailProps = {
   children: ReactNode;
@@ -22,42 +18,32 @@ type TrailDot = { id: number; x: number; y: number };
 export function MagneticTrail({ children, className }: MagneticTrailProps) {
   const reduceMotion = useReducedMotion();
   const desktop = useDesktopPointer();
-  const ref = useRef<HTMLDivElement>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [trail, setTrail] = useState<TrailDot[]>([]);
   const idRef = useRef(0);
 
-  const onMove = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
-      if (!desktop || reduceMotion) return;
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      setOffset({
-        x: (e.clientX - cx) * 0.22,
-        y: (e.clientY - cy) * 0.22,
-      });
-      const lx = e.clientX - rect.left;
-      const ly = e.clientY - rect.top;
+  const { ref, onMouseMove } = usePointerGeometry(
+    (g) => {
+      setOffset({ x: g.dx * 0.22, y: g.dy * 0.22 });
       idRef.current += 1;
       const id = idRef.current;
-      setTrail((prev) => [...prev.slice(-8), { id, x: lx, y: ly }]);
+      setTrail((prev) => [...prev.slice(-8), { id, x: g.px, y: g.py }]);
     },
-    [desktop, reduceMotion]
+    { enabled: desktop && !reduceMotion }
   );
+
+  const onMouseLeave = useCallback(() => {
+    setOffset({ x: 0, y: 0 });
+    setTrail([]);
+  }, []);
 
   return (
     <motion.div
       ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={() => {
-        setOffset({ x: 0, y: 0 });
-        setTrail([]);
-      }}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
       animate={{ x: offset.x, y: offset.y }}
-      transition={{ type: "spring", stiffness: 260, damping: 18, mass: 0.4 }}
+      transition={magneticSpring}
       className={cn("relative inline-flex max-md:!transform-none", className)}
     >
       {desktop &&
