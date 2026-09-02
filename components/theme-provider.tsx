@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -49,12 +50,16 @@ function readDomTheme(): Theme {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(readDomTheme);
 
-  useEffect(() => {
+  // The head script sets the class before first paint. Re-apply it during
+  // React's development remount without forcing a second state render.
+  useLayoutEffect(() => {
     const stored = readStoredTheme();
     const initial = stored ?? getSystemTheme();
-    setThemeState(initial);
     applyThemeClass(initial);
+  }, []);
 
+  useEffect(() => {
+    const stored = readStoredTheme();
     if (stored) return;
 
     const mq = window.matchMedia("(prefers-color-scheme: dark)");

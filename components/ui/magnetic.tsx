@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { magneticSpring } from "@/components/motion";
 import { cn } from "@/lib/utils";
 import { useMagneticOffset } from "@/lib/use-pointer-track";
@@ -18,7 +19,7 @@ export function Magnetic({
   className,
   strength = 0.28,
 }: MagneticProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const { ref, offset, bind } = useMagneticOffset({
     strength,
     enabled: !reduceMotion,

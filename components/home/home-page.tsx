@@ -1,10 +1,8 @@
 "use client";
 
 import { AmbientScrollBlob } from "@/components/effects/ambient-scroll-blob";
-import { InertiaScroll } from "@/components/effects/inertia-scroll";
 import { IntroOverlay } from "@/components/effects/intro-overlay";
 import { NoiseOverlay } from "@/components/effects/noise-overlay";
-import { PageCurtain } from "@/components/effects/page-curtain";
 import { SectionAccent } from "@/components/effects/section-accent";
 import { CommandPalette } from "@/components/ui/command-palette";
 import { CursorGlow } from "@/components/ui/cursor-glow";
@@ -22,8 +20,6 @@ export function HomePage() {
   return (
     <>
       <IntroOverlay />
-      <PageCurtain />
-      <InertiaScroll />
       <SectionAccent />
       <ScrollProgress />
       <CursorGlow />
@@ -32,7 +28,7 @@ export function HomePage() {
       <SectionRail />
       <CommandPalette />
 
-      <main>
+      <main id="main-content" tabIndex={-1} className="outline-none">
         <HeroSection />
         <AboutSection />
         <TechSection />

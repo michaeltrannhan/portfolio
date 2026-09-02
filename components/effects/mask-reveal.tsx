@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useEffect, useState, type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { easeOut } from "@/components/motion";
 
@@ -17,7 +18,7 @@ export function MaskReveal({
   className,
   delay = 0,
 }: MaskRevealProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   // Drop clip-path after the wipe so absolutely-positioned children can escape.
   const [revealed, setRevealed] = useState(false);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { cn } from "@/lib/utils";
 import { useDesktopPointer } from "@/lib/use-media";
 import { usePointerGeometry } from "@/lib/use-pointer-track";
@@ -11,7 +11,7 @@ type WarpingGridProps = {
 
 /** CSS grid that warps near the cursor via radial mask + perspective. */
 export function WarpingGrid({ className }: WarpingGridProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const desktop = useDesktopPointer();
   const { ref, onMouseMove } = usePointerGeometry(
     (g, el) => {

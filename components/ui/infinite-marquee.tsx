@@ -1,7 +1,7 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import type { CSSProperties } from "react";
-import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type InfiniteMarqueeProps = {
@@ -16,7 +16,7 @@ export function InfiniteMarquee({
   className,
   speed = 36,
 }: InfiniteMarqueeProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const loop = [...items, ...items];
 
   return (

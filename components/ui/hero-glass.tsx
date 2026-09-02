@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { cn } from "@/lib/utils";
 
 type HeroGlassProps = {
@@ -9,7 +9,7 @@ type HeroGlassProps = {
 
 /** Layered frosted planes behind the hero — atmospheric depth, not clutter. */
 export function HeroGlass({ className }: HeroGlassProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
 
   return (
     <div

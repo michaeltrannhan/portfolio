@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { usePointerNormalized } from "@/lib/use-pointer-track";
 
@@ -17,7 +18,7 @@ export function TiltCard({
   className,
   maxTilt = 6,
 }: TiltCardProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const { ref, pos, bind } = usePointerNormalized({
     enabled: !reduceMotion,
   });

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { easeOut } from "@/components/motion";
 
@@ -16,7 +17,7 @@ export function SplitReassemble({
   className,
   as: Tag = "h2",
 }: SplitReassembleProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const words = text.split(" ");
 
   if (reduceMotion) {

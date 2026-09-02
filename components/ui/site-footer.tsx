@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { cn } from "@/lib/utils";
 import { SOCIALS } from "@/lib/site";
 import { AnimatedLink } from "@/components/ui/animated-link";
@@ -13,7 +13,7 @@ type SiteFooterProps = {
 };
 
 export function SiteFooter({ className }: SiteFooterProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
 
   return (
     <>

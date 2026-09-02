@@ -1,7 +1,7 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { type ReactNode } from "react";
-import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useHydrated } from "@/lib/use-hydrated";
 
@@ -20,7 +20,7 @@ export function ShimmerText({
   "aria-hidden": ariaHidden,
 }: ShimmerTextProps) {
   const hydrated = useHydrated();
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const animate = hydrated && !reduceMotion;
 
   if (!animate) {

@@ -18,21 +18,27 @@ export function useActiveSection(ids: readonly string[]): string {
       .map((id) => document.getElementById(id))
       .filter(Boolean) as HTMLElement[];
     if (elements.length === 0) return;
+    const ratios = new Map(elements.map((element) => [element.id, 0]));
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort(
-            (a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0)
+        entries.forEach((entry) => {
+          ratios.set(
+            entry.target.id,
+            entry.isIntersecting ? entry.intersectionRatio : 0
           );
+        });
 
-        const nextId = visible[0]?.target?.id;
+        const visible = [...ratios.entries()]
+          .filter(([, ratio]) => ratio > 0)
+          .sort(([, a], [, b]) => b - a);
+
+        const nextId = visible[0]?.[0];
         if (!nextId) return;
 
         // Require a clear lead before flipping — stops thrash at boundaries.
-        const topRatio = visible[0].intersectionRatio ?? 0;
-        const secondRatio = visible[1]?.intersectionRatio ?? 0;
+        const topRatio = visible[0][1];
+        const secondRatio = visible[1]?.[1] ?? 0;
         if (visible.length > 1 && topRatio < secondRatio + 0.08) return;
 
         // Functional update bails out when unchanged (no extra render).

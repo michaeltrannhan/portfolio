@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { easeOut } from "@/components/motion";
 
@@ -19,7 +20,7 @@ type HoverExpandListProps = {
 
 /** Rows that expand on hover with a side preview panel (desktop). */
 export function HoverExpandList({ items, className }: HoverExpandListProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const [active, setActive] = useState(0);
 
   return (

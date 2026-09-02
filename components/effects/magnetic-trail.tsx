@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useCallback, useRef, useState, type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { magneticSpring } from "@/components/motion";
 import { cn } from "@/lib/utils";
 import { useDesktopPointer } from "@/lib/use-media";
@@ -16,7 +17,7 @@ type TrailDot = { id: number; x: number; y: number };
 
 /** Magnetic pull plus short pointer trail for social icon clusters. */
 export function MagneticTrail({ children, className }: MagneticTrailProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const desktop = useDesktopPointer();
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [trail, setTrail] = useState<TrailDot[]>([]);

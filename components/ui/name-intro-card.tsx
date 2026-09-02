@@ -1,5 +1,6 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import {
   useCallback,
   useEffect,
@@ -11,9 +12,9 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { createPortal } from "react-dom";
-import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { SOCIALS } from "@/lib/site";
+import { useHydrated } from "@/lib/use-hydrated";
 import { GlassPanel } from "@/components/ui/glass-panel";
 import { SocialLink } from "@/components/ui/social-link";
 
@@ -50,18 +51,14 @@ export function NameIntroCard({
   className,
   as: Tag = "h1",
 }: NameIntroCardProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const panelId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useHydrated();
 
   const cancelClose = useCallback(() => {
     if (closeTimer.current) {

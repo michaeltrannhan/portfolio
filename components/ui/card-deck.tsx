@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export type DeckCard = {
@@ -17,7 +18,7 @@ type CardDeckProps = {
 
 /** Stacked deck that fans out on hover / focus. */
 export function CardDeck({ cards, className }: CardDeckProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const [open, setOpen] = useState(false);
 
   return (

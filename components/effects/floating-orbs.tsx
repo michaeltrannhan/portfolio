@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useDesktopPointer } from "@/lib/use-media";
 import { usePointerNormalized } from "@/lib/use-pointer-track";
@@ -17,7 +18,7 @@ const ORBS = [
 
 /** Blurred orbs that drift toward the pointer on desktop. */
 export function FloatingOrbs({ className }: FloatingOrbsProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const desktop = useDesktopPointer();
   const { ref, pos, bind } = usePointerNormalized({
     enabled: desktop && !reduceMotion,

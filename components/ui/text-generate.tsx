@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { easeOut } from "@/components/motion";
 
@@ -16,7 +17,7 @@ export function TextGenerate({
   className,
   delay = 0.35,
 }: TextGenerateProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const parts = words.split(" ");
 
   if (reduceMotion) {

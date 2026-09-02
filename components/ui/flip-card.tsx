@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { easeOut } from "@/components/motion";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +20,7 @@ type FlipCardProps = {
 
 /** Card that flips to reveal tech stack on the back. */
 export function FlipCard({ item, className }: FlipCardProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const [flipped, setFlipped] = useState(false);
 
   return (

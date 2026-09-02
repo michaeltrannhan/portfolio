@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
+import { motion } from "framer-motion";
 import { SECTIONS, SECTION_IDS } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { useActiveSection } from "@/lib/use-active-section";
@@ -11,7 +12,7 @@ type SectionRailProps = {
 
 /** Side rail dots with active pulse as sections enter view. */
 export function SectionRail({ className }: SectionRailProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const active = useActiveSection(SECTION_IDS);
 
   return (
@@ -29,7 +30,7 @@ export function SectionRail({ className }: SectionRailProps) {
             key={section.id}
             href={`#${section.id}`}
             aria-label={section.label}
-            aria-current={isActive ? "true" : undefined}
+            aria-current={isActive ? "location" : undefined}
             className="group relative flex items-center justify-end"
             onClick={(e) => {
               const el = document.getElementById(section.id);

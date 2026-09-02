@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useMemo } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type SparklesProps = {
@@ -11,7 +12,7 @@ type SparklesProps = {
 
 /** Sparse particle accents near CTAs — very light. */
 export function Sparkles({ className, count = 8 }: SparklesProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const dots = useMemo(
     () =>
       Array.from({ length: count }, (_, i) => ({

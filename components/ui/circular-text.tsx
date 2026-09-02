@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { cn } from "@/lib/utils";
 import { useHydrated } from "@/lib/use-hydrated";
 
@@ -17,7 +17,7 @@ export function CircularText({
   size = 140,
 }: CircularTextProps) {
   const hydrated = useHydrated();
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const chars = text.split("");
   const radius = size / 2 - 10;
 

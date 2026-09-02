@@ -1,5 +1,6 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import {
   useCallback,
   useEffect,
@@ -8,7 +9,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type Particle = {
@@ -36,7 +37,7 @@ type ConfettiBurstProps = {
 
 /** Tasteful one-shot confetti on primary CTA click. */
 export function ConfettiBurst({ children, className }: ConfettiBurstProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const [bits, setBits] = useState<Particle[]>([]);
   const timerRef = useRef<number | null>(null);
 

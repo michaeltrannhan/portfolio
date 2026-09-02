@@ -1,9 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useRef } from "react";
 import {
   motion,
-  useReducedMotion,
   useScroll,
   useTransform,
 } from "framer-motion";
@@ -26,7 +26,7 @@ export function HorizontalGallery({
   className,
 }: HorizontalGalleryProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end end"],
@@ -46,7 +46,7 @@ export function HorizontalGallery({
             key={slide.title}
             className="glass min-w-[75%] snap-center overflow-hidden rounded-2xl p-5 sm:min-w-[40%]"
             style={{
-              backgroundImage: `linear-gradient(180deg, ${slide.tone}, var(--glass-bg))`,
+              backgroundImage: slide.tone,
             }}
           >
             <h3 className="text-base font-medium">{slide.title}</h3>
@@ -60,17 +60,18 @@ export function HorizontalGallery({
   return (
     <div ref={ref} className={cn("relative h-[180vh]", className)}>
       <div className="sticky top-24 overflow-hidden py-8">
-        <motion.div
-          style={{ x }}
-          className="flex w-max gap-4 pr-[40vw] perspective-[1200px]"
-        >
+        {/*
+         * Cards use a solid surface, not `.glass` — backdrop-filter inside a
+         * scroll-driven transform re-blurs + re-rasterizes every frame and is
+         * the main source of pinned-gallery jank/flicker.
+         */}
+        <motion.div style={{ x }} className="flex w-max gap-4 pr-[40vw]">
           {slides.map((slide, i) => (
             <article
               key={slide.title}
-              className="glass w-[min(78vw,22rem)] shrink-0 overflow-hidden rounded-2xl p-6"
+              className="w-[min(78vw,22rem)] shrink-0 overflow-hidden rounded-2xl border border-[var(--glass-border)] p-6 shadow-[0_1px_0_0_var(--glass-highlight-soft)_inset,0_16px_48px_-12px_var(--glass-shadow-lg)]"
               style={{
-                backgroundImage: `linear-gradient(180deg, ${slide.tone}, var(--glass-bg))`,
-                transform: `rotateY(${i % 2 === 0 ? -4 : 4}deg)`,
+                backgroundImage: slide.tone,
               }}
             >
               <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">

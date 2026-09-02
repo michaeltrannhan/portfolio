@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { type ReactNode } from "react";
-import { motion, type HTMLMotionProps, useReducedMotion } from "framer-motion";
+import { motion, type HTMLMotionProps } from "framer-motion";
 
 export const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -35,7 +36,7 @@ export function Reveal({
   delay = 0,
   ...props
 }: RevealProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
 
   if (reduceMotion) {
     return <div className={className}>{children}</div>;
@@ -69,7 +70,7 @@ export function FadeIn({
   delay = 0,
   ...props
 }: FadeInProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
 
   if (reduceMotion) {
     return <div className={className}>{children}</div>;

@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useMemo } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useHydrated } from "@/lib/use-hydrated";
 
@@ -13,7 +14,7 @@ type MeteorsProps = {
 /** Sparse CSS meteors / shooting stars. */
 export function Meteors({ count = 8, className }: MeteorsProps) {
   const hydrated = useHydrated();
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const items = useMemo(
     () =>
       Array.from({ length: count }, (_, i) => ({

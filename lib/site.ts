@@ -84,8 +84,7 @@ export const NAV_SECTIONS = SECTIONS.filter((section) => section.inNav);
 export const SECTION_IDS = SECTIONS.map((section) => section.id);
 
 /**
- * sessionStorage flag coordinating the first-visit handoff:
- * IntroOverlay writes it, PageCurtain reads it to skip its wipe.
+ * Session flag used by IntroOverlay to distinguish first and returning visits.
  */
 export const INTRO_SEEN_KEY = "mt-intro-seen";
 

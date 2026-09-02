@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { MovingBorder } from "@/components/ui/moving-border";
 import { TiltCard } from "@/components/ui/tilt-card";
@@ -22,7 +23,7 @@ type ProjectBentoProps = {
 
 /** Bento grid with tilt, moving border, and hover image preview. */
 export function ProjectBento({ projects, className }: ProjectBentoProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const [hovered, setHovered] = useState<string | null>(null);
 
   return (

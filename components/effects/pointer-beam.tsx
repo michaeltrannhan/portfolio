@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useDesktopPointer } from "@/lib/use-media";
 import { usePointerPercent } from "@/lib/use-pointer-track";
@@ -13,7 +14,7 @@ type PointerBeamProps = {
 
 /** Glowing beam that follows the pointer across a card grid. */
 export function PointerBeam({ children, className }: PointerBeamProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const desktop = useDesktopPointer();
   const { ref, pos, inside, bind } = usePointerPercent({
     enabled: desktop && !reduceMotion,

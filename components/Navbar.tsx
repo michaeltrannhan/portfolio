@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useCallback, useEffect, useState, type MouseEvent } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Menu, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { easeOut } from "@/components/motion";
@@ -10,13 +11,13 @@ import { requestOpenCommandPalette } from "@/components/ui/command-palette";
 import { Magnetic } from "@/components/ui/magnetic";
 import { NAV_SECTIONS, SECTION_IDS } from "@/lib/site";
 import { useActiveSection } from "@/lib/use-active-section";
-import { useChromePhysics } from "@/components/nav/use-chrome-physics";
+import { useScrolledChrome } from "@/components/nav/use-scrolled-chrome";
 
 const Navbar = () => {
   const active = useActiveSection(SECTION_IDS);
   const [menuOpen, setMenuOpen] = useState(false);
-  const reduceMotion = useReducedMotion();
-  const { chromeRef, scrolled } = useChromePhysics();
+  const reduceMotion = useHydratedReducedMotion();
+  const { scrolled } = useScrolledChrome();
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -54,18 +55,12 @@ const Navbar = () => {
       className="fixed inset-x-0 top-4 z-50 mx-auto max-w-3xl px-4"
     >
       <div
-        ref={chromeRef}
         className={cn(
           "glass-pill flex items-center justify-between rounded-full px-3 py-2 transition-[background-color,box-shadow,border-color] duration-300 md:px-4 md:py-2.5",
           scrolled
             ? "bg-[var(--glass-bg-strong)] shadow-[0_1px_0_0_var(--glass-highlight)_inset,0_12px_40px_-12px_var(--glass-shadow-lg)]"
             : "bg-[var(--glass-bg-soft)] border-[var(--glass-border-subtle)]"
         )}
-        style={{
-          backdropFilter: "blur(12px) saturate(var(--glass-saturate))",
-          WebkitBackdropFilter: "blur(12px) saturate(var(--glass-saturate))",
-          transformOrigin: "center top",
-        }}
       >
         <Magnetic strength={0.18}>
           <a
@@ -87,6 +82,7 @@ const Navbar = () => {
                 <Magnetic key={section.id} strength={0.22}>
                   <a
                     href={`#${section.id}`}
+                    aria-current={isActive ? "location" : undefined}
                     onClick={(event) =>
                       handleNavClick(event, `#${section.id}`)
                     }
@@ -164,6 +160,7 @@ const Navbar = () => {
                 <a
                   key={section.id}
                   href={`#${section.id}`}
+                  aria-current={isActive ? "location" : undefined}
                   onClick={(event) => handleNavClick(event, `#${section.id}`)}
                   className={cn(
                     "block rounded-xl px-4 py-3 text-sm transition-colors",

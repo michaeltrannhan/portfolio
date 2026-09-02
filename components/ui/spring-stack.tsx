@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export type SpringItem = {
@@ -15,7 +16,7 @@ type SpringStackProps = {
 
 /** Spring-physics stacked list that peels on hover. */
 export function SpringStack({ items, className }: SpringStackProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
 
   return (
     <ul className={cn("relative space-y-0", className)}>
