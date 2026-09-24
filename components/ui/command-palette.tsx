@@ -1,5 +1,6 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import {
   useCallback,
   useEffect,
@@ -8,23 +9,19 @@ import {
   useState,
   type FormEvent,
 } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Search } from "lucide-react";
+import { SECTIONS } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import { useScrollLock } from "@/lib/use-scroll-lock";
 import { easeOut } from "@/components/motion";
 
-const DESTINATIONS = [
-  { id: "about", label: "About", hint: "Intro & story", href: "#about" },
-  { id: "tech", label: "Tech", hint: "Stack & tools", href: "#tech" },
-  {
-    id: "projects",
-    label: "Projects",
-    hint: "Selected work",
-    href: "#projects",
-  },
-  { id: "blog", label: "Blog", hint: "Writing", href: "#blog" },
-  { id: "contact", label: "Contact", hint: "Footer / socials", href: "#contact" },
-];
+const DESTINATIONS = SECTIONS.map((section) => ({
+  id: section.id,
+  label: section.label,
+  hint: section.hint,
+  href: `#${section.id}`,
+}));
 
 /** Dispatched by Navbar (and anything else) to open the palette. */
 export const OPEN_COMMAND_PALETTE_EVENT = "mt:open-command-palette";
@@ -36,12 +33,21 @@ export function requestOpenCommandPalette() {
 
 /** ⌘K / Ctrl+K quick jump — Spotlight-style top-center placement. */
 export function CommandPalette() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
+  const [lastQuery, setLastQuery] = useState(query);
   const panelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+
+  // Reset the highlighted row when the query changes (render-time adjust,
+  // per https://react.dev/learn/you-might-not-need-an-effect).
+  if (query !== lastQuery) {
+    setLastQuery(query);
+    setActive(0);
+  }
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -53,12 +59,12 @@ export function CommandPalette() {
   }, [query]);
 
   useEffect(() => {
-    setActive(0);
-  }, [query]);
-
-  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        const blockingDialog = document.querySelector(
+          '[role="dialog"][aria-modal="true"]:not([aria-label="Quick jump"])'
+        );
+        if (blockingDialog) return;
         e.preventDefault();
         setOpen((v) => !v);
       }
@@ -74,14 +80,14 @@ export function CommandPalette() {
     };
   }, []);
 
+  useScrollLock(open);
+
   useEffect(() => {
     if (!open) return;
-    const sbw = window.innerWidth - document.documentElement.clientWidth;
-    const prevOverflow = document.body.style.overflow;
-    const prevPadding = document.body.style.paddingRight;
-    document.body.style.overflow = "hidden";
-    if (sbw > 0) document.body.style.paddingRight = `${sbw}px`;
-
+    returnFocusRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
     const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 0);
 
     const onFocusTrap = (e: KeyboardEvent) => {
@@ -105,8 +111,9 @@ export function CommandPalette() {
     return () => {
       window.clearTimeout(focusTimer);
       window.removeEventListener("keydown", onFocusTrap);
-      document.body.style.overflow = prevOverflow;
-      document.body.style.paddingRight = prevPadding;
+      const returnTarget = returnFocusRef.current;
+      returnFocusRef.current = null;
+      window.requestAnimationFrame(() => returnTarget?.focus());
     };
   }, [open]);
 

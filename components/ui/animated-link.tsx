@@ -1,5 +1,3 @@
-"use client";
-
 import { type AnchorHTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 

@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { usePointerPercent } from "@/lib/use-pointer-track";
 
 type SpotlightProps = {
   children: ReactNode;
@@ -18,33 +19,21 @@ export function Spotlight({
   color = "var(--spotlight)",
   size = 420,
 }: SpotlightProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState({ x: 50, y: 40 });
-  const [active, setActive] = useState(false);
-
-  const onMove = useCallback((event: MouseEvent<HTMLDivElement>) => {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    setPos({
-      x: ((event.clientX - rect.left) / rect.width) * 100,
-      y: ((event.clientY - rect.top) / rect.height) * 100,
-    });
-  }, []);
+  const { ref, pos, inside, bind } = usePointerPercent({
+    initial: { x: 50, y: 40 },
+  });
 
   return (
     <div
       ref={ref}
-      onMouseMove={onMove}
-      onMouseEnter={() => setActive(true)}
-      onMouseLeave={() => setActive(false)}
+      {...bind}
       className={cn("relative overflow-hidden", className)}
     >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 max-md:hidden"
         style={{
-          opacity: active ? 1 : 0.35,
+          opacity: inside ? 1 : 0.35,
           background: `radial-gradient(${size}px circle at ${pos.x}% ${pos.y}%, ${color}, transparent 55%)`,
         }}
       />

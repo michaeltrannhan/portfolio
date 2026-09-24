@@ -1,7 +1,7 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>/$#@%";
@@ -18,7 +18,7 @@ export function ScrambleText({
   className,
   as: Tag = "span",
 }: ScrambleTextProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const [display, setDisplay] = useState(text);
   const frame = useRef(0);
   const timer = useRef<number | null>(null);

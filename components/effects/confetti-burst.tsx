@@ -1,12 +1,15 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import {
   useCallback,
+  useEffect,
+  useRef,
   useState,
   type MouseEvent,
   type ReactNode,
 } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type Particle = {
@@ -15,6 +18,9 @@ type Particle = {
   y: number;
   color: string;
   rot: number;
+  /** Precomputed flight vector — keeps render pure (no Math.random in render). */
+  vx: number;
+  vy: number;
 };
 
 const COLORS = [
@@ -31,8 +37,16 @@ type ConfettiBurstProps = {
 
 /** Tasteful one-shot confetti on primary CTA click. */
 export function ConfettiBurst({ children, className }: ConfettiBurstProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const [bits, setBits] = useState<Particle[]>([]);
+  const timerRef = useRef<number | null>(null);
+
+  // Never leave a pending clear running after unmount.
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const burst = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
@@ -46,9 +60,12 @@ export function ConfettiBurst({ children, className }: ConfettiBurstProps) {
         y: originY,
         color: COLORS[i % COLORS.length],
         rot: (Math.random() - 0.5) * 180,
+        vx: (Math.random() - 0.5) * 120,
+        vy: -40 - Math.random() * 80,
       }));
       setBits(next);
-      window.setTimeout(() => setBits([]), 900);
+      if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+      timerRef.current = window.setTimeout(() => setBits([]), 900);
     },
     [reduceMotion]
   );
@@ -67,8 +84,8 @@ export function ConfettiBurst({ children, className }: ConfettiBurstProps) {
             animate={{
               opacity: 0,
               scale: 0.6,
-              x: (Math.random() - 0.5) * 120,
-              y: -40 - Math.random() * 80,
+              x: p.vx,
+              y: p.vy,
               rotate: p.rot,
             }}
             transition={{ duration: 0.75, delay: i * 0.01, ease: "easeOut" }}

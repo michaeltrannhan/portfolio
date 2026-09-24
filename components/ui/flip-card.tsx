@@ -1,7 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { easeOut } from "@/components/motion";
 import { cn } from "@/lib/utils";
 
 export type FlipCardItem = {
@@ -18,7 +20,7 @@ type FlipCardProps = {
 
 /** Card that flips to reveal tech stack on the back. */
 export function FlipCard({ item, className }: FlipCardProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const [flipped, setFlipped] = useState(false);
 
   return (
@@ -45,7 +47,7 @@ export function FlipCard({ item, className }: FlipCardProps) {
             ? undefined
             : { rotateY: flipped ? 180 : 0 }
         }
-        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.55, ease: easeOut }}
       >
         <div className="glass absolute inset-0 flex flex-col justify-between overflow-hidden rounded-2xl p-5 [backface-visibility:hidden]">
           {item.tag && (

@@ -1,9 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useRef, type ReactNode } from "react";
 import {
   motion,
-  useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
@@ -18,7 +18,7 @@ type TracingBeamProps = {
 /** Vertical scroll-linked beam beside content (desktop). */
 export function TracingBeam({ children, className }: TracingBeamProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: ref,

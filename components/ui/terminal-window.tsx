@@ -1,7 +1,7 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useEffect, useState } from "react";
-import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useHydrated } from "@/lib/use-hydrated";
 
@@ -21,17 +21,13 @@ type TerminalWindowProps = {
 /** Fake terminal window with progressive typing. */
 export function TerminalWindow({ className }: TerminalWindowProps) {
   const hydrated = useHydrated();
-  const reduceMotion = useReducedMotion();
-  const [count, setCount] = useState(LINES.length);
+  const reduceMotion = useHydratedReducedMotion();
+  const [count, setCount] = useState(0);
   const animate = hydrated && !reduceMotion;
+  const visibleCount = animate ? count : LINES.length;
 
   useEffect(() => {
-    if (!hydrated) return;
-    if (reduceMotion) {
-      setCount(LINES.length);
-      return;
-    }
-    setCount(0);
+    if (!animate) return;
     let i = 0;
     const id = window.setInterval(() => {
       i += 1;
@@ -39,7 +35,7 @@ export function TerminalWindow({ className }: TerminalWindowProps) {
       if (i >= LINES.length) window.clearInterval(id);
     }, 520);
     return () => window.clearInterval(id);
-  }, [hydrated, reduceMotion]);
+  }, [animate]);
 
   return (
     <div
@@ -57,7 +53,7 @@ export function TerminalWindow({ className }: TerminalWindowProps) {
         </span>
       </div>
       <pre className="relative z-10 min-h-[10rem] space-y-1 p-4 font-mono text-xs leading-relaxed md:text-sm">
-        {LINES.slice(0, count).map((line, i) => (
+        {LINES.slice(0, visibleCount).map((line, i) => (
           <div
             key={`${line}-${i}`}
             className={
@@ -71,7 +67,7 @@ export function TerminalWindow({ className }: TerminalWindowProps) {
             {line}
           </div>
         ))}
-        {animate && count < LINES.length && (
+        {animate && visibleCount < LINES.length && (
           <span className="inline-block h-4 w-2 animate-caret bg-[oklch(0.85_0.06_180)] align-middle" />
         )}
       </pre>

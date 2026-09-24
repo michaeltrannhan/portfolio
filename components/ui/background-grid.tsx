@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { cn } from "@/lib/utils";
 
 type BackgroundGridProps = {
@@ -9,7 +9,7 @@ type BackgroundGridProps = {
 
 /** Subtle grid with optional slow parallax drift. */
 export function BackgroundGrid({ className }: BackgroundGridProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
 
   return (
     <div

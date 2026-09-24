@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { easeOut } from "@/components/motion";
 
@@ -19,7 +20,7 @@ export function HoverVideoClip({
   gradient = "linear-gradient(135deg, oklch(0.88 0.05 210), oklch(0.92 0.04 95))",
   className,
 }: HoverVideoClipProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const [hover, setHover] = useState(false);
 
   return (

@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { easeOut } from "@/components/motion";
+import { useScrollLock } from "@/lib/use-scroll-lock";
 
 export type CaseStudy = {
   id: string;
@@ -23,22 +25,50 @@ type ProjectModalProps = {
 
 /** Expandable case studies with shared layoutId animation. */
 export function ProjectModal({ studies, className }: ProjectModalProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const [active, setActive] = useState<CaseStudy | null>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (!active) return;
+    const focusFrame = window.requestAnimationFrame(() =>
+      closeButtonRef.current?.focus()
+    );
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setActive(null);
+      if (e.key === "Escape") {
+        setActive(null);
+        return;
+      }
+      if (e.key !== "Tab" || !dialogRef.current) return;
+
+      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     return () => {
+      window.cancelAnimationFrame(focusFrame);
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
+      const trigger = triggerRef.current;
+      triggerRef.current = null;
+      window.requestAnimationFrame(() => trigger?.focus());
     };
   }, [active]);
+
+  // Lock background scroll (with scrollbar compensation) while a study is open.
+  useScrollLock(active !== null);
 
   return (
     <div className={cn("grid gap-3 sm:grid-cols-2", className)}>
@@ -47,7 +77,10 @@ export function ProjectModal({ studies, className }: ProjectModalProps) {
           key={study.id}
           type="button"
           layoutId={reduceMotion ? undefined : `case-${study.id}`}
-          onClick={() => setActive(study)}
+          onClick={(event) => {
+            triggerRef.current = event.currentTarget;
+            setActive(study);
+          }}
           className="glass overflow-hidden rounded-2xl p-5 text-left transition-colors hover:bg-[var(--glass-bg-tint)]"
         >
           <motion.p
@@ -76,12 +109,17 @@ export function ProjectModal({ studies, className }: ProjectModalProps) {
             onClick={() => setActive(null)}
           >
             <motion.article
+              ref={dialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={`case-study-title-${active.id}`}
               layoutId={reduceMotion ? undefined : `case-${active.id}`}
               transition={{ duration: 0.35, ease: easeOut }}
               className="glass-strong relative max-h-[85vh] w-full max-w-lg overflow-auto rounded-2xl p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <button
+                ref={closeButtonRef}
                 type="button"
                 aria-label="Close case study"
                 onClick={() => setActive(null)}
@@ -96,6 +134,7 @@ export function ProjectModal({ studies, className }: ProjectModalProps) {
                 {active.tag}
               </motion.p>
               <motion.h3
+                id={`case-study-title-${active.id}`}
                 layoutId={reduceMotion ? undefined : `case-title-${active.id}`}
                 className="mt-2 pr-8 text-xl font-semibold tracking-tight"
               >

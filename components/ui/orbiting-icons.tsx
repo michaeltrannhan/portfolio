@@ -1,7 +1,7 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { Code2, Database, Layout, Sparkles, Terminal } from "lucide-react";
-import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useHydrated } from "@/lib/use-hydrated";
 
@@ -24,7 +24,7 @@ export function OrbitingIcons({
   label = "Core",
 }: OrbitingIconsProps) {
   const hydrated = useHydrated();
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const animate = hydrated && !reduceMotion;
 
   return (

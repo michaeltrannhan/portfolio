@@ -1,5 +1,5 @@
 import type { MDXComponents } from 'mdx/types'
-import { twMerge } from 'tailwind-merge';
+import { cn } from '@/lib/utils';
 
 // Custom components for MDX
 import React from 'react';
@@ -9,7 +9,7 @@ export function getMDXComponents(components: MDXComponents = {}): MDXComponents 
     h1: ({ children }) => {
       const h1Props = components?.h1 as React.ComponentProps<'h1'>;
       return (
-        <h1 className={twMerge('text-3xl font-bold my-4', h1Props?.className)}>
+        <h1 className={cn('text-3xl font-bold my-4', h1Props?.className)}>
           {children}
         </h1>
       );

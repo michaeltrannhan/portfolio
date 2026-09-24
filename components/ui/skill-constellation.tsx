@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useMemo, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export type SkillNode = {
@@ -32,7 +33,7 @@ export function SkillConstellation({
   nodes = DEFAULT_NODES,
   className,
 }: SkillConstellationProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const [active, setActive] = useState<string | null>(null);
   const center = nodes[0];
 

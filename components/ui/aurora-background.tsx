@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { cn } from "@/lib/utils";
 
 type AuroraBackgroundProps = {
@@ -9,7 +9,7 @@ type AuroraBackgroundProps = {
 
 /** Soft animated mesh / aurora plane — teal–amber, not purple. */
 export function AuroraBackground({ className }: AuroraBackgroundProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
 
   return (
     <div

@@ -1,9 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { type ReactNode } from "react";
 import {
   motion,
-  useReducedMotion,
   useScroll,
   useTransform,
 } from "framer-motion";
@@ -16,7 +16,7 @@ type HeroParallaxProps = {
 
 /** Multi-layer depth: back atmosphere drifts slower than content. */
 export function HeroParallax({ children, className }: HeroParallaxProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const { scrollY } = useScroll();
   const yBack = useTransform(scrollY, [0, 500], [0, 80]);
   const yMid = useTransform(scrollY, [0, 500], [0, 40]);

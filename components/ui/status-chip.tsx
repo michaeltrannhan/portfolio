@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type StatusChipProps = {
@@ -18,18 +19,14 @@ export function StatusChip({
   suffix = "",
   className,
 }: StatusChipProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-10% 0px" });
   const [display, setDisplay] = useState(0);
+  const visibleValue = reduceMotion ? value : display;
 
   useEffect(() => {
-    if (!inView) return;
-
-    if (reduceMotion) {
-      setDisplay(value);
-      return;
-    }
+    if (!inView || reduceMotion) return;
 
     let frame = 0;
     const total = 28;
@@ -55,7 +52,7 @@ export function StatusChip({
       )}
     >
       <span className="font-mono font-medium tabular-nums text-foreground">
-        {display}
+        {visibleValue}
         {suffix}
       </span>
       <span className="text-muted-foreground">{label}</span>

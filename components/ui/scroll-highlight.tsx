@@ -1,9 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { useRef, type ReactNode } from "react";
 import {
   motion,
-  useReducedMotion,
   useScroll,
   useTransform,
 } from "framer-motion";
@@ -20,7 +20,7 @@ export function ScrollHighlight({
   className,
 }: ScrollHighlightProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start 0.85", "end 0.45"],

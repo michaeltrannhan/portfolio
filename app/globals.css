@@ -7,6 +7,7 @@
 @theme {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-syne);
 }
 
 :root {
@@ -422,14 +423,6 @@
   animation: spin-slow 28s linear infinite reverse;
 }
 
-html.inertia-scroll {
-  scroll-behavior: auto;
-}
-
-html.inertia-scroll body {
-  transition: transform 0.12s ease-out;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .animate-aurora-a,
   .animate-aurora-b,
@@ -525,17 +518,6 @@ html.inertia-scroll body {
 .glass .glass-soft::before,
 .glass-strong .glass-soft::before {
   content: none;
-}
-
-.glass-sheen-edge {
-  box-shadow:
-    0 1px 0 0 var(--glass-specular) inset,
-    0 -1px 0 0 var(--glass-border-subtle) inset,
-    0 8px 28px -8px var(--glass-shadow);
-}
-
-.glass-tint {
-  background-color: var(--glass-bg-tint);
 }
 
 /* Hero atmospheric glass shards */
